@@ -1,2 +1,2 @@
 # MessengerAPI
-backend with Spring (Boot, Web, JPA, Security) for android "Messenger" app
+Backend with Spring (Boot, Web, JPA, Security), Maven for android "Messenger" app
