@@ -1,5 +1,7 @@
 package com.volvadvit.messenger.api.services
 
+import com.volvadvit.messenger.api.exceptions.MessageEmptyException
+import com.volvadvit.messenger.api.exceptions.MessageRecipientInvalidException
 import com.volvadvit.messenger.api.models.Conversation
 import com.volvadvit.messenger.api.models.Message
 import com.volvadvit.messenger.api.models.User
@@ -14,8 +16,7 @@ class MessageServiceImpl (val repository: MessageRepository,
                           val conversationService: ConversationService,
                           val userRepository: UserRepository) : MessageService {
 
-    @Throws(MessageEmptyException::class,
-        MessageRecipientInvalidException::class)
+    @Throws(MessageEmptyException::class, MessageRecipientInvalidException::class)
     override fun sendMessage(sender: User, recipientId: Long, messageText: String): Message {
         val optional = userRepository.findById(recipientId)
         if (optional.isPresent) {
@@ -35,6 +36,6 @@ class MessageServiceImpl (val repository: MessageRepository,
         } else {
             throw MessageRecipientInvalidException("The recipient id '$recipientId' is invalid")
         }
-        thow MessageEmptyException()
+        throw MessageEmptyException()
     }
 }

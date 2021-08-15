@@ -1,5 +1,8 @@
 package com.volvadvit.messenger.api.services
 
+import com.volvadvit.messenger.api.exceptions.InvalidUserIdException
+import com.volvadvit.messenger.api.exceptions.UserStatusEmptyException
+import com.volvadvit.messenger.api.exceptions.UsernameUnavailableException
 import com.volvadvit.messenger.api.models.User
 import com.volvadvit.messenger.api.repositaries.UserRepository
 import org.springframework.stereotype.Service
@@ -7,7 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 class UserServiceImpl(private val repository: UserRepository) : UserService {
 
-    @Throws(UsernameUnvailableException::class)
+    @Throws(UsernameUnavailableException::class)
     override fun attemptRegistration(userDetails: User): User {
         if (!usernameExists(userDetails.username)) {
             val user = User()
@@ -18,7 +21,7 @@ class UserServiceImpl(private val repository: UserRepository) : UserService {
             obscurePassword(user)
             return user
         }
-        throw UsernameUnvailableException("The username ${userDetails.username} is unavailable.")
+        throw UsernameUnavailableException("The username ${userDetails.username} is unavailable.")
     }
 
     override fun listUsers(currentUser: User): List<User> {

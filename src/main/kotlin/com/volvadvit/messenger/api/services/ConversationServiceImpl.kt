@@ -1,5 +1,6 @@
 package com.volvadvit.messenger.api.services
 
+import com.volvadvit.messenger.api.exceptions.ConversationInvalidException
 import com.volvadvit.messenger.api.models.Conversation
 import com.volvadvit.messenger.api.models.User
 import com.volvadvit.messenger.api.repositaries.ConversationRepository
