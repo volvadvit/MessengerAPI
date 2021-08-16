@@ -9,7 +9,7 @@ import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 
 @Entity
-@Table(name = "user")
+@Table(name = "user_details")
 @EntityListeners(UserListener::class)
 class User (
     @Id
@@ -30,7 +30,7 @@ class User (
     @Size(min = 60, max = 60)
     var password: String = "",
 
-    var status: String = "",
+    var status: String = "available",
 
     @Pattern(regexp = "\\A(activated|deactivated)\\z")
     var accountStatus: String = "activated"

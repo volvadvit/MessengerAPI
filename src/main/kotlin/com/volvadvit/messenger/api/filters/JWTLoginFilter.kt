@@ -1,6 +1,8 @@
 package com.volvadvit.messenger.api.filters
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.volvadvit.messenger.api.security.AccountCredentials
+import com.volvadvit.messenger.api.services.TokenAuthenticationService
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
@@ -40,6 +42,10 @@ class JWTLoginFilter(url: String, authManager: AuthenticationManager)
         chain: FilterChain?,
         authResult: Authentication?
     ) {
-        TokenAuthenticationService.addAuthentication(response, authResult?.name)
+        if (response != null && authResult != null) {
+            TokenAuthenticationService.addAuthentication(response, authResult.name)
+        } else {
+            throw ServletException()
+        }
     }
 }

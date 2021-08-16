@@ -1,6 +1,8 @@
 package com.volvadvit.messenger.api.config
 
+import com.volvadvit.messenger.api.filters.JWTAuthenticationFilter
 import com.volvadvit.messenger.api.filters.JWTLoginFilter
+import com.volvadvit.messenger.api.services.AppUserDetailsService
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
@@ -18,7 +20,7 @@ class WebSecurityConfig(val userDetailsService: AppUserDetailsService) : WebSecu
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
         http.csrf().disable().authorizeRequests()
-            .antMatchers(HttpMethod.POST, "/users/registration")
+            .antMatchers(HttpMethod.POST, "/users/registrations")
             .permitAll()
             .antMatchers(HttpMethod.POST, "/login")
             .permitAll()
@@ -27,7 +29,8 @@ class WebSecurityConfig(val userDetailsService: AppUserDetailsService) : WebSecu
             .addFilterBefore(
                 JWTLoginFilter("/login", authenticationManager()),
                 UsernamePasswordAuthenticationFilter::class.java)
-            .addFilterBefor(JWTAuthenticationFilter(),
+            .addFilterBefore(
+                JWTAuthenticationFilter(),
                 UsernamePasswordAuthenticationFilter::class.java)
     }
 
