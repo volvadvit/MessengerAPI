@@ -26,11 +26,11 @@ internal object TokenAuthenticationService {
     fun getAuthentication(request: HttpServletRequest): Authentication? {
         val token = request.getHeader(AUTHORIZATION_HEAD_KEY)
         if (token != null) {
-            val user = Jwts.parser().setSigningKey(SECRET)
+            val username = Jwts.parser().setSigningKey(SECRET)
                 .parseClaimsJws(token.replace(TOKEN_PREFIX,  ""))
                 .body.subject
-            if (user != null) {
-                return UsernamePasswordAuthenticationToken(user, null, emptyList())
+            if (username != null) {
+                return UsernamePasswordAuthenticationToken(username, null, emptyList())
             }
         }
         return null

@@ -1,6 +1,6 @@
-package com.volvadvit.messenger.api.services
+package com.volvadvit.messenger.api.services.impl
 
-import com.volvadvit.messenger.api.repositaries.UserRepository
+import com.volvadvit.messenger.api.repositories.UserRepository
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Component
 
 @Component
-class AppUserDetailsService(val userRepository: UserRepository) : UserDetailsService {
+class AppUserDetailsService(private val userRepository: UserRepository) : UserDetailsService {
 
     @Throws(UsernameNotFoundException::class)
     override fun loadUserByUsername(p0: String?): UserDetails {

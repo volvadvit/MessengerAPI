@@ -4,13 +4,12 @@ import com.volvadvit.messenger.api.helpers.objects.ConversationListVO
 import com.volvadvit.messenger.api.helpers.objects.ConversationVO
 import com.volvadvit.messenger.api.helpers.objects.MessageVO
 import com.volvadvit.messenger.api.models.Conversation
-import com.volvadvit.messenger.api.services.ConversationServiceImpl
+import com.volvadvit.messenger.api.services.impl.ConversationServiceImpl
 import org.springframework.stereotype.Component
 
 @Component
 class ConversationAssembler(val conversationService: ConversationServiceImpl,
                             val messageAssembler: MessageAssembler) {
-
     fun toConversationVO(conversation: Conversation, userId: Long) : ConversationVO {
         val conversationMessages: ArrayList<MessageVO> = ArrayList()
         conversation.messages!!.mapTo(conversationMessages) {

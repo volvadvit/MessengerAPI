@@ -1,13 +1,15 @@
-package com.volvadvit.messenger.api.services
+package com.volvadvit.messenger.api.services.impl
 
 import com.volvadvit.messenger.api.exceptions.MessageEmptyException
 import com.volvadvit.messenger.api.exceptions.MessageRecipientInvalidException
 import com.volvadvit.messenger.api.models.Conversation
 import com.volvadvit.messenger.api.models.Message
 import com.volvadvit.messenger.api.models.User
-import com.volvadvit.messenger.api.repositaries.ConversationRepository
-import com.volvadvit.messenger.api.repositaries.MessageRepository
-import com.volvadvit.messenger.api.repositaries.UserRepository
+import com.volvadvit.messenger.api.repositories.ConversationRepository
+import com.volvadvit.messenger.api.repositories.MessageRepository
+import com.volvadvit.messenger.api.repositories.UserRepository
+import com.volvadvit.messenger.api.services.ConversationService
+import com.volvadvit.messenger.api.services.MessageService
 import org.springframework.stereotype.Service
 
 @Service

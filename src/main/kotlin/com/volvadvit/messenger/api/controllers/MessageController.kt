@@ -2,9 +2,8 @@ package com.volvadvit.messenger.api.controllers
 
 import com.volvadvit.messenger.api.components.MessageAssembler
 import com.volvadvit.messenger.api.helpers.objects.MessageVO
-import com.volvadvit.messenger.api.models.Message
-import com.volvadvit.messenger.api.repositaries.UserRepository
-import com.volvadvit.messenger.api.services.MessageServiceImpl
+import com.volvadvit.messenger.api.repositories.UserRepository
+import com.volvadvit.messenger.api.services.impl.MessageServiceImpl
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

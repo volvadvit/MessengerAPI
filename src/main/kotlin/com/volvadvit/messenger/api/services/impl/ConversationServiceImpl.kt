@@ -1,9 +1,10 @@
-package com.volvadvit.messenger.api.services
+package com.volvadvit.messenger.api.services.impl
 
 import com.volvadvit.messenger.api.exceptions.ConversationInvalidException
 import com.volvadvit.messenger.api.models.Conversation
 import com.volvadvit.messenger.api.models.User
-import com.volvadvit.messenger.api.repositaries.ConversationRepository
+import com.volvadvit.messenger.api.repositories.ConversationRepository
+import com.volvadvit.messenger.api.services.ConversationService
 import org.springframework.stereotype.Service
 
 @Service

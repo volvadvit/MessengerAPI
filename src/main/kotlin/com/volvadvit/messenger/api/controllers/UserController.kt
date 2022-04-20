@@ -4,8 +4,8 @@ import com.volvadvit.messenger.api.components.UserAssembler
 import com.volvadvit.messenger.api.helpers.objects.UserListVO
 import com.volvadvit.messenger.api.helpers.objects.UserVO
 import com.volvadvit.messenger.api.models.User
-import com.volvadvit.messenger.api.repositaries.UserRepository
-import com.volvadvit.messenger.api.services.UserServiceImpl
+import com.volvadvit.messenger.api.repositories.UserRepository
+import com.volvadvit.messenger.api.services.impl.UserServiceImpl
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*

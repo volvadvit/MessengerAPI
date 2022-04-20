@@ -1,4 +1,4 @@
-package com.volvadvit.messenger.api.components
+package com.volvadvit.messenger.api.exceptions.handlers
 
 import com.volvadvit.messenger.api.constants.ErrorResponse
 import com.volvadvit.messenger.api.constants.ResponseConstants

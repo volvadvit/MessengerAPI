@@ -2,7 +2,7 @@ package com.volvadvit.messenger.api.config
 
 import com.volvadvit.messenger.api.filters.JWTAuthenticationFilter
 import com.volvadvit.messenger.api.filters.JWTLoginFilter
-import com.volvadvit.messenger.api.services.AppUserDetailsService
+import com.volvadvit.messenger.api.services.impl.AppUserDetailsService
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-class WebSecurityConfig(val userDetailsService: AppUserDetailsService) : WebSecurityConfigurerAdapter() {
+class WebSecurityConfig (val appUserDetailsService: AppUserDetailsService) : WebSecurityConfigurerAdapter() {
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
@@ -27,16 +27,18 @@ class WebSecurityConfig(val userDetailsService: AppUserDetailsService) : WebSecu
             .anyRequest().authenticated()
             .and()
             .addFilterBefore(
+                // set jwt token if credentials are ok
                 JWTLoginFilter("/login", authenticationManager()),
                 UsernamePasswordAuthenticationFilter::class.java)
             .addFilterBefore(
+                // check jwt token
                 JWTAuthenticationFilter(),
                 UsernamePasswordAuthenticationFilter::class.java)
     }
 
     @Throws(Exception::class)
     override fun configure(auth: AuthenticationManagerBuilder?) {
-        auth?.userDetailsService<UserDetailsService>(userDetailsService)
+        auth?.userDetailsService<UserDetailsService>(appUserDetailsService)
             ?.passwordEncoder(BCryptPasswordEncoder())
     }
 }

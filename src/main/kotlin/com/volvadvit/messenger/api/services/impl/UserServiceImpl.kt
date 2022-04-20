@@ -1,10 +1,11 @@
-package com.volvadvit.messenger.api.services
+package com.volvadvit.messenger.api.services.impl
 
 import com.volvadvit.messenger.api.exceptions.InvalidUserIdException
 import com.volvadvit.messenger.api.exceptions.UserStatusEmptyException
 import com.volvadvit.messenger.api.exceptions.UsernameUnavailableException
 import com.volvadvit.messenger.api.models.User
-import com.volvadvit.messenger.api.repositaries.UserRepository
+import com.volvadvit.messenger.api.repositories.UserRepository
+import com.volvadvit.messenger.api.services.UserService
 import org.springframework.stereotype.Service
 
 @Service

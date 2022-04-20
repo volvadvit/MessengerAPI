@@ -3,8 +3,8 @@ package com.volvadvit.messenger.api.controllers
 import com.volvadvit.messenger.api.components.ConversationAssembler
 import com.volvadvit.messenger.api.helpers.objects.ConversationListVO
 import com.volvadvit.messenger.api.helpers.objects.ConversationVO
-import com.volvadvit.messenger.api.repositaries.UserRepository
-import com.volvadvit.messenger.api.services.ConversationServiceImpl
+import com.volvadvit.messenger.api.repositories.UserRepository
+import com.volvadvit.messenger.api.services.impl.ConversationServiceImpl
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
