@@ -17,7 +17,8 @@ internal class UserServiceImplUnitTest {
 
     @BeforeEach
     fun setUp() {
-        testUser = User(username = "name")
+        testUser = User()
+        testUser.username = "name"
     }
 
     @Test

@@ -6,24 +6,24 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-class Message (
+class Message {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long = 0
+
     @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    var sender: User? = null,
+    @JoinColumn(name = "sender_id", referencedColumnName = "id")
+    var sender: User? = null
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "recipient_id", referencedColumnName = "id")
-    var recipient: User? = null,
+    var recipient: User? = null
 
-    var body: String? = "",
+    var body: String? = ""
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "conversation_id", referencedColumnName = "id")
-    var conversation: Conversation? = null,
-
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long = 0,
+    var conversation: Conversation? = null
 
     @DateTimeFormat
     var createdAt: Date = Date.from(Instant.now())
-)
+}

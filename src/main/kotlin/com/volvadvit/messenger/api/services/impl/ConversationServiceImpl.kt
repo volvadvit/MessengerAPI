@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service
 class ConversationServiceImpl(val repository: ConversationRepository) : ConversationService {
 
     override fun createConversation(userA: User, userB: User): Conversation {
-        val conversation = Conversation(sender = userA, recipient = userB)
+        val conversation = Conversation()
+        conversation.sender = userA
+        conversation.recipient = userB
         repository.save(conversation)
         return conversation
     }

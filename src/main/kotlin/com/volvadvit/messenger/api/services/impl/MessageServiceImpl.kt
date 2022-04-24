@@ -31,7 +31,11 @@ class MessageServiceImpl (val repository: MessageRepository,
                         conversationService.createConversation(sender, recipient)
                     }
                 conversationRepository.save(conversation)
-                val message = Message(sender, recipient, messageText, conversation)
+                val message = Message()
+                message.sender = sender
+                message.recipient = recipient
+                message.body = messageText
+                message.conversation = conversation
                 repository.save(message)
                 return message
             }

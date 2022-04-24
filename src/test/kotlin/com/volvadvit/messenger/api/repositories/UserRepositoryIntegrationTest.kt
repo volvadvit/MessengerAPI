@@ -4,16 +4,27 @@ import com.volvadvit.messenger.api.models.User
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration
+import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.TestPropertySource
+import org.springframework.transaction.annotation.Transactional
 import javax.sql.DataSource
 
-@DataJpaTest
-//@TestPropertySource("/application-test.properties")
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Transactional
+@AutoConfigureCache
+@AutoConfigureDataJpa
+@AutoConfigureTestDatabase
+@AutoConfigureTestEntityManager
+@ImportAutoConfiguration
+@SpringBootTest
+@TestPropertySource("/application-test.properties")
+//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class UserRepositoryIntegrationTest @Autowired constructor(
     private val dataSource: DataSource,
     private val jdbcTemplate: JdbcTemplate,
@@ -31,7 +42,9 @@ class UserRepositoryIntegrationTest @Autowired constructor(
 
     @Test
     fun testFindUserByUsername() {
-        val user = User(username = "name")
+        val user = User()
+        user.username = "name"
+        user.phoneNumber = "1111111111"
         entityManager.persistAndFlush(user)
         val result = repository.findByUsername(user.username)
         assertThat(result === user)
