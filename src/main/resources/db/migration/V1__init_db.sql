@@ -30,10 +30,17 @@ create table user_details (
   primary key (id)
 );
 
+create table user_role (
+  user_id bigint not null,
+  roles varchar(255)
+);
+
+
 alter table user_details add constraint user_details_username_unique unique (username);
 alter table conversation add constraint convers_user_recip_fk foreign key (recipient_id) references user_details (id);
 alter table conversation add constraint convers_user_send_fk foreign key (sender_id) references user_details (id);
 alter table message add constraint message_convers_fk foreign key (conversation_id) references conversation (id);
 alter table message add constraint message_recip_fk foreign key (recipient_id) references user_details (id);
 alter table message add constraint message_send_fk foreign key (sender_id) references user_details (id);
+alter table user_role add constraint user_role_fk foreign key (user_id) references user_details (id);
 
