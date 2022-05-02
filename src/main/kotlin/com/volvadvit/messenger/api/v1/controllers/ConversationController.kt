@@ -4,7 +4,7 @@ import com.volvadvit.messenger.api.v1.models.ConversationListVO
 import com.volvadvit.messenger.api.v1.models.ConversationVO
 import com.volvadvit.messenger.api.v1.assemblers.ConversationAssembler
 import com.volvadvit.messenger.repositories.UserRepository
-import com.volvadvit.messenger.services.impl.ConversationServiceImpl
+import com.volvadvit.messenger.services.ConversationService
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest
 @RestController
 @RequestMapping("/v1/conversations")
 @Api(value = "conversations")
-class ConversationController(val conversationService: ConversationServiceImpl,
+class ConversationController(val conversationService: ConversationService,
                              val conversationAssembler: ConversationAssembler, val userRepository: UserRepository
 ){
 

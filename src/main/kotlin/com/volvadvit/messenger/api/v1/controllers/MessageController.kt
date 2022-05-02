@@ -4,7 +4,7 @@ import com.volvadvit.messenger.api.v1.models.MessageRequest
 import com.volvadvit.messenger.api.v1.models.MessageVO
 import com.volvadvit.messenger.api.v1.assemblers.MessageAssembler
 import com.volvadvit.messenger.repositories.UserRepository
-import com.volvadvit.messenger.services.impl.MessageServiceImpl
+import com.volvadvit.messenger.services.MessageService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/v1/messages")
-class MessageController(val messageService: MessageServiceImpl,
+class MessageController(val messageService: MessageService,
                         val userRepository: UserRepository, val messageAssembler: MessageAssembler
 ) {
 

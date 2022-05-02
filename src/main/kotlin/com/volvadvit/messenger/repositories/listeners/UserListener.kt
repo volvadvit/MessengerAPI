@@ -1,4 +1,4 @@
-package com.volvadvit.messenger.listeners
+package com.volvadvit.messenger.repositories.listeners
 
 import com.volvadvit.messenger.models.User
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder

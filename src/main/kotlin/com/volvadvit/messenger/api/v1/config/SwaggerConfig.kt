@@ -20,10 +20,8 @@ class SwaggerConfig : WebMvcConfigurer {
     fun api(): Docket {
         return Docket(DocumentationType.SWAGGER_2)
             .apiInfo(apiInfo())
-//            .host("http://localhost:8080")
             .select()
-//            .apis(RequestHandlerSelectors.any())
-            .apis(RequestHandlerSelectors.basePackage("com.volvadvit.messenger.api.v1.controllers")) // пакет с контроллерами
+            .apis(RequestHandlerSelectors.basePackage("com.volvadvit.messenger.api.v1.controllers"))
             .paths(PathSelectors.any()) // regex for url
             .build()
     }

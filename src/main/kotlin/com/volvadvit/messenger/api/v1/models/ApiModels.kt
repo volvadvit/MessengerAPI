@@ -5,6 +5,16 @@ import io.swagger.annotations.ApiModelProperty
 
 data class MessageRequest(val recipientId: Long, val message: String)
 
+@ApiModel("Common json format for all responses")
+data class ResponseMapper (
+    @ApiModelProperty("Status of response, like http status")
+    val status: Int,
+    @ApiModelProperty("Additional message with error/success message")
+    val message: String,
+    @ApiModelProperty("Response model of required entity")
+    val body: Any
+)
+
 data class UserVO (
     val id: Long,
     val username: String,

@@ -1,8 +1,7 @@
-package com.volvadvit.messenger.services.impl
+package com.volvadvit.messenger.services
 
 import com.volvadvit.messenger.models.User
 import com.volvadvit.messenger.repositories.UserRepository
-import com.volvadvit.messenger.services.UserService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -12,7 +11,7 @@ import org.mockito.Mockito.`when`
 internal class UserServiceImplUnitTest {
 
     private val repository: UserRepository = mock(UserRepository::class.java)
-    private val userService: UserService = UserServiceImpl(repository)
+    private val userService: UserService = UserService(repository)
     private lateinit var testUser: User
 
     @BeforeEach

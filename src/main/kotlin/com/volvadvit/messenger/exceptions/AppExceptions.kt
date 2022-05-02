@@ -6,3 +6,4 @@ class MessageEmptyException(override val message: String = "A message cannot be 
 class MessageRecipientInvalidException(override val message: String) : RuntimeException()
 class ConversationInvalidException(override val message: String) : RuntimeException()
 class UserDeactivatedException(override val message: String) : RuntimeException()
+class InvalidTokenException(override val message: String) : RuntimeException()

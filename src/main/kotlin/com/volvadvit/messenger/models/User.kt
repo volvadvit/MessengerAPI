@@ -1,6 +1,6 @@
 package com.volvadvit.messenger.models
 
-import com.volvadvit.messenger.listeners.UserListener
+import com.volvadvit.messenger.repositories.listeners.UserListener
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.Instant
 import java.util.*
@@ -37,13 +37,11 @@ class User {
 
     // sender messages collection
     @OneToMany(mappedBy = "sender", targetEntity = Message::class, fetch = FetchType.LAZY)
-    private var sentMessages: Collection<Message>? = null
+    var sentMessages: Collection<Message>? = null
 
     // received messages collection
     @OneToMany(mappedBy = "recipient", targetEntity = Message::class, fetch = FetchType.LAZY)
-    private var receivedMessages: Collection<Message>? = null
-
-    // conversation many to many
+    var receivedMessages: Collection<Message>? = null
 
     @ElementCollection(targetClass = Role::class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = [JoinColumn(name = "user_id")])

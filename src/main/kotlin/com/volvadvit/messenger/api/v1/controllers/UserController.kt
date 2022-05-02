@@ -6,7 +6,7 @@ import com.volvadvit.messenger.api.v1.assemblers.UserAssembler
 import com.volvadvit.messenger.api.v1.models.UpdatedUserDetails
 import com.volvadvit.messenger.models.User
 import com.volvadvit.messenger.repositories.UserRepository
-import com.volvadvit.messenger.services.impl.UserServiceImpl
+import com.volvadvit.messenger.services.UserService
 import io.swagger.annotations.ApiOperation
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest
 @RestController
 @RequestMapping("/v1/users")
 class UserController(
-    val userService: UserServiceImpl,
+    val userService: UserService,
     val userAssembler: UserAssembler,
     val userRepository: UserRepository
 ) {
