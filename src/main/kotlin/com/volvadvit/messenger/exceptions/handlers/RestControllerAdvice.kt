@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 class RestControllerAdvice {
 
     @ExceptionHandler(UserDeactivatedException::class)
-    fun usernameUnavailable(userDeactivatedException: UserDeactivatedException
+    fun userDeactivated(userDeactivatedException: UserDeactivatedException
     ) : ResponseEntity<ResponseMapper> {
         val res = ResponseMapper(
-            HttpStatus.NOT_FOUND.value(),
+            HttpStatus.FORBIDDEN.value(),
             ResponseConstants.ACCOUNT_DEACTIVATED.value,
             userDeactivatedException.message)
-        return ResponseEntity(res, HttpStatus.UNAUTHORIZED) // http 403 error+
+        return ResponseEntity(res, HttpStatus.FORBIDDEN)
     }
 }

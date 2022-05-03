@@ -44,7 +44,7 @@ class UserRepositoryIntegrationTest @Autowired constructor(
     fun testFindUserByUsername() {
         val user = User()
         user.username = "name"
-        user.phoneNumber = "1111111111"
+        user.email = "1111111111"
         entityManager.persistAndFlush(user)
         val result = repository.findByUsername(user.username)
         assertThat(result === user)

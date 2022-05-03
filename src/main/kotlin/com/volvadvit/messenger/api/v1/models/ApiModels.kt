@@ -1,5 +1,6 @@
 package com.volvadvit.messenger.api.v1.models
 
+import com.volvadvit.messenger.constants.Role
 import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
 
@@ -18,16 +19,27 @@ data class ResponseMapper (
 data class UserVO (
     val id: Long,
     val username: String,
-    val phoneNumber: String,
+    val photoUrl: String,
+    val email: String,
     val status: String,
-    val createdAt: String
+    val createdAt: String,
+    val lastActive: String,
+    val friends: List<ShortUserVO>,
+    val roles: Set<Role>
+)
+data class ShortUserVO (
+    val id: Long,
+    val username: String,
+    val photoUrl: String,
+    val lastActive: String
 )
 
 @ApiModel(value = "Model to contain details for update user")
 data class UpdatedUserDetails (
-    val password: String?,
     val username: String?,
-    val phoneNumber: String?,
+    val password: String?,
+    val photoUrl: String,
+    val email: String?,
     val status: String?
 )
 
@@ -35,24 +47,28 @@ data class UserListVO (
     val users: List<UserVO>
 )
 
+data class ShortUserListVO (
+    val friends: List<ShortUserVO>
+)
+
 data class MessageVO (
     val id: Long,
     val senderId: Long,
-    val recipientId: Long,
     val conversationId: Long?,
     val body: String?,
-    val createdAt: String
+    val createdAt: String,
+    val status: String
 )
 
 data class ConversationVO (
-    @ApiModelProperty(notes = "Auto-generated identifier")
+    @ApiModelProperty(notes = "Conversation identifier")
     val conversationId: Long?,
-    @ApiModelProperty(notes = "Username of opposite user")
-    val secondPartyUsername: String,
-    @ApiModelProperty(notes = "List of messages in conversation")
-    val messages: ArrayList<MessageVO>
+    @ApiModelProperty(notes = "List of conversation users")
+    val users: List<ShortUserVO>,
+    @ApiModelProperty(notes = "List of conversation messages")
+    val messages: List<MessageVO>
 )
 
-data class ConversationListVO(
+data class ConversationListVO (
     val conversations: List<ConversationVO>
 )

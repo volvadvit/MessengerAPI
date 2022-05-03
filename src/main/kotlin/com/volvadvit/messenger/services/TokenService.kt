@@ -1,22 +1,22 @@
 package com.volvadvit.messenger.services
 
 import com.auth0.jwt.JWT
+import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import com.volvadvit.messenger.exceptions.InvalidTokenException
 import com.volvadvit.messenger.exceptions.UsernameUnavailableException
-import com.volvadvit.messenger.models.Role
 import io.lettuce.core.RedisClient
 import io.lettuce.core.RedisURI
 import io.lettuce.core.api.sync.RedisCommands
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.stereotype.Service
 import java.time.Instant
 import java.util.*
 
-object TokenService {
+@Service
+class TokenService {
 
     private val logger = LoggerFactory.getLogger(TokenService::class.java)
 
@@ -36,21 +36,18 @@ object TokenService {
     @Value("\${token.refresh.expr.sec}")
     private lateinit var refreshTokenExp : String
 
-    private val algorithm = Algorithm.HMAC256(jwtSecret.toByteArray())
-    private val verifier = JWT.require(algorithm).build()
-    private const val bearerLength = "Bearer ".length
-    private var syncCommands: RedisCommands<String, String>
-
-    init {
-        syncCommands = setUpRedis()
-    }
+    private lateinit var algorithm : Algorithm
+    private lateinit var verifier : JWTVerifier
+    private val bearerLength = "Bearer ".length
+    private var syncCommands: RedisCommands<String, String>? = null
 
     fun generateJwtToken(username: String, roles: List<String?>?): Map<String, String> {
+        setUpRedis()
+
         val accessToken = JWT.create()
             .withSubject(username)
             .withExpiresAt(Date(System.currentTimeMillis() + accessTokenExp.toLong()))
             .withIssuedAt(Date.from(Instant.now()))
-            .withClaim("roles", roles)
             .sign(algorithm)
 
         val refreshToken = JWT.create()
@@ -58,8 +55,8 @@ object TokenService {
             .withIssuedAt(Date.from(Instant.now()))
             .sign(algorithm)
 
-        syncCommands.set("token:$username", refreshToken)
-        syncCommands.expire("token:$username", refreshTokenExp.toLong())
+        syncCommands?.set("token:$username", refreshToken)
+        syncCommands?.expire("token:$username", refreshTokenExp.toLong())
 
         logger.info("Create token pair access: {}, refresh: {}", accessToken, refreshToken)
 
@@ -71,27 +68,31 @@ object TokenService {
         )
     }
 
-    fun verifiedAccessToken(authorizationHeader: String) {
+    fun verifiedAccessToken(authorizationHeader: String) : UsernamePasswordAuthenticationToken {
+        setUpRedis()
+
         val token = authorizationHeader.substring(bearerLength)
         val decodedJWT = verifier.verify(token)
 
         val username = decodedJWT.subject
-        val roles: List<Role> = decodedJWT.getClaim("roles").asList(Role::class.java)
 
-        if (!username.isNullOrEmpty() || roles.isNotEmpty()) {
-            val authenticationToken = UsernamePasswordAuthenticationToken(username, null, roles)
+        if (!username.isNullOrEmpty()) {
+            val authenticationToken = UsernamePasswordAuthenticationToken(username, null, emptyList())
+
             logger.info("User $username is verified.")
-            SecurityContextHolder.getContext().authentication = authenticationToken
+
+            return authenticationToken
         } else {
             throw InvalidTokenException("Invalid or empty user credentials. Cannot verify token")
         }
     }
 
     fun updateAccessToken(authorizationHeader: String, userService: UserService): Map<String, String> {
-        val username = getUsernameFromToken(authorizationHeader)
+        setUpRedis()
 
+        val username = getUsernameFromToken(authorizationHeader)
         val tokenFromRequest = authorizationHeader.substring(bearerLength)
-        val tokenFromRedis = syncCommands.get("token:$username")
+        val tokenFromRedis = syncCommands?.get("token:$username")
 
         return if (!tokenFromRedis.isNullOrEmpty() && tokenFromRedis == tokenFromRequest) {
 
@@ -107,7 +108,7 @@ object TokenService {
         }
     }
 
-    fun getUsernameFromToken(authorizationHeader: String?): String {
+    private fun getUsernameFromToken(authorizationHeader: String?): String {
         return if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             val token = authorizationHeader.substring(bearerLength)
             val decodedJWT = verifier.verify(token)
@@ -117,7 +118,14 @@ object TokenService {
         }
     }
 
-    private fun setUpRedis(): RedisCommands<String, String> {
+    private fun setUpRedis(): RedisCommands<String, String>? {
+        if (syncCommands != null) {
+            return syncCommands
+        }
+
+        algorithm = Algorithm.HMAC256(jwtSecret.toByteArray())
+        verifier = JWT.require(algorithm).build()
+
         val localhost = RedisURI.Builder
             .redis(redisHost, redisPort.toInt()).withPassword(redisPassword.toCharArray())
             .withDatabase(redisDatabase.toInt()).build()

@@ -2,7 +2,8 @@ package com.volvadvit.messenger.config
 
 import com.volvadvit.messenger.filter.AuthenticationFilter
 import com.volvadvit.messenger.filter.AuthorizationFilter
-import com.volvadvit.messenger.models.Role
+import com.volvadvit.messenger.constants.Role
+import com.volvadvit.messenger.services.TokenService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -15,32 +16,39 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-class WebSecurityConfig : WebSecurityConfigurerAdapter() {
+class WebSecurityConfig(
+    private val tokenService: TokenService
+) : WebSecurityConfigurerAdapter() {
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
-        val authenticationFilter = AuthenticationFilter(authenticationManagerBean()!!)
-        authenticationFilter.setFilterProcessesUrl("/api/login")
+        val authenticationFilter = AuthenticationFilter(authenticationManagerBean()!!, tokenService)
+        authenticationFilter.setFilterProcessesUrl("/v1/login")
 
         http.cors().and().csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
-            .antMatchers( HttpMethod.POST, "/api/v1/users/registrations").permitAll()
-            .antMatchers("/login").permitAll()
-            .antMatchers("/h2-console/**/**").hasAnyAuthority(Role.DEV.authority, Role.ADMIN.authority)
             .antMatchers(
+                "/v1/", "/",
+                "/v1/login",
+                "/v1/users/registrations",
                 "/webjars/**",
                 "/swagger-ui/**",
                 "/swagger-ui/index.html",
                 "/swagger-resources/**",
-                "/v2/api-docs/**").permitAll()
-            .antMatchers(HttpMethod.PUT, "/api/v1/users/*").hasAnyAuthority(Role.DEV.authority, Role.ADMIN.authority)
-            .antMatchers("/api/v1/**").hasAnyAuthority(Role.USER.authority, Role.ADMIN.authority)
+                "/v2/api-docs/**"
+            ).permitAll()
+            .antMatchers("/h2-console/**").permitAll()
+            .antMatchers(HttpMethod.PUT, "/v1/users/*").hasAnyAuthority(Role.ADMIN.authority)
+            .antMatchers("/v1/**/**").hasAnyAuthority(Role.USER.authority, Role.ADMIN.authority)
             .anyRequest().authenticated()
+            .and().logout().deleteCookies("JSESSIONID").logoutSuccessUrl("/v1").permitAll()
             .and()
+            // login and generate token
             .addFilter(authenticationFilter)
-            .addFilterBefore(AuthorizationFilter(), UsernamePasswordAuthenticationFilter::class.java)
+            // re-identify the logged user, verify token
+            .addFilterBefore(AuthorizationFilter(tokenService), UsernamePasswordAuthenticationFilter::class.java)
     }
 
     @Bean

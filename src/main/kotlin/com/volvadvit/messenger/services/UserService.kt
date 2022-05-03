@@ -25,7 +25,7 @@ class UserService(private val repository: UserRepository) : UserDetailsService {
         if (!usernameExists(userDetails.username)) {
             val user = User()
             user.username = userDetails.username
-            user.phoneNumber = userDetails.phoneNumber
+            user.email = userDetails.email
             user.password = userDetails.password
             repository.save(user)
             obscurePassword(user)
@@ -70,8 +70,8 @@ class UserService(private val repository: UserRepository) : UserDetailsService {
         if (!updateDetails.password.isNullOrBlank()) {
             currentUser.password = updateDetails.password
         }
-        if (!updateDetails.phoneNumber.isNullOrBlank()) {
-            currentUser.phoneNumber = updateDetails.phoneNumber
+        if (!updateDetails.email.isNullOrBlank()) {
+            currentUser.email = updateDetails.email
         }
         repository.save(currentUser)
         return currentUser

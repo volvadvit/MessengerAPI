@@ -1,6 +1,6 @@
 package com.volvadvit.messenger.services
 
-import com.volvadvit.messenger.exceptions.ConversationInvalidException
+import com.volvadvit.messenger.exceptions.InvalidConversationException
 import com.volvadvit.messenger.models.Conversation
 import com.volvadvit.messenger.models.User
 import com.volvadvit.messenger.repositories.ConversationRepository
@@ -43,7 +43,7 @@ class ConversationService(val repository: ConversationRepository) {
         if (conversation.isPresent) {
             return conversation.get()
         }
-        throw ConversationInvalidException("Invalid conversation id '$conversationId'")
+        throw InvalidConversationException("Invalid conversation id '$conversationId'")
     }
     fun listUserConversations(userId: Long): ArrayList<Conversation> {
         val conversationList: ArrayList<Conversation> = ArrayList()
@@ -51,11 +51,10 @@ class ConversationService(val repository: ConversationRepository) {
         conversationList.addAll(repository.findByRecipientId(userId))
         return conversationList
     }
-    fun nameSecondParty(conversation: Conversation, userId: Long): String {
-        return if (conversation.sender?.id == userId) {
-            conversation.recipient?.username as String
-        } else {
-            conversation.sender?.username as String
-        }
+    fun nameSecondUser(conversation: Conversation, userId: Long): String {
+        val users = conversation.users
+        return users.first { it?.id != userId }?.username
+            ?: conversation.users[0]?.username
+            ?: throw InvalidConversationException("List of users in conversation is empty")
     }
 }

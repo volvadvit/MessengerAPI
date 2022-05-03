@@ -7,21 +7,20 @@ import javax.persistence.*
 
 @Entity
 class Conversation {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "sender_id", referencedColumnName = "id")
-    var sender: User? = null
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "recipient_id", referencedColumnName = "id")
-    var recipient: User? = null
+    @ManyToMany(mappedBy = "conversations", targetEntity = User::class)
+    val users: Collection<User?> = mutableListOf()
 
     @DateTimeFormat
-    val createdAt: Date = Date.from(Instant.now())
+    var createdAt: Date = Date.from(Instant.now())
 
-    @OneToMany(mappedBy = "conversation", targetEntity = Message::class)
-    internal var messages: Collection<Message>? = null
+    @OneToMany(mappedBy = "conversation", targetEntity = Message::class, cascade = [CascadeType.ALL])
+    val messages: Collection<Message> = mutableListOf()
+
+    var photoURL: String? = null
+
+    var name: String? = null
 }

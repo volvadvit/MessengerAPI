@@ -1,5 +1,6 @@
 package com.volvadvit.messenger.models
 
+import com.volvadvit.messenger.constants.Role
 import com.volvadvit.messenger.repositories.listeners.UserListener
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.Instant
@@ -13,8 +14,11 @@ import javax.validation.constraints.Size
 @EntityListeners(UserListener::class)
 class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //TODO loginAttemptsCount + email verification
+
+    //TODO change 'var' to 'val' in all entities
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0
 
     @DateTimeFormat
@@ -24,24 +28,24 @@ class User {
     @Size(min = 2)
     var username: String = ""
 
-    @Pattern(regexp = "^\\(?(\\d{3})\\)?[-]?(\\d{3})[-]?(\\d{4})$")
-    var phoneNumber: String = ""
+    @Pattern(regexp = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$")
+    var email: String = ""
 
     @Size(min = 3, max = 60)
     var password: String = ""
 
-    var status: String = "available"
+    @DateTimeFormat
+    var lastActive: Date = Date.from(Instant.now())
 
     @Pattern(regexp = "\\A(activated|deactivated)\\z")
-    var accountStatus: String = "activated"
+    var status: String = "activated"
 
-    // sender messages collection
-    @OneToMany(mappedBy = "sender", targetEntity = Message::class, fetch = FetchType.LAZY)
-    var sentMessages: Collection<Message>? = null
-
-    // received messages collection
-    @OneToMany(mappedBy = "recipient", targetEntity = Message::class, fetch = FetchType.LAZY)
-    var receivedMessages: Collection<Message>? = null
+    @ManyToMany
+    @JoinTable(
+        name = "user_conversations",
+        joinColumns = [JoinColumn(name = "user_id")],
+        inverseJoinColumns = [JoinColumn(name = "conversation_id")])
+    var conversations : Set<Conversation>? = null
 
     @ElementCollection(targetClass = Role::class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = [JoinColumn(name = "user_id")])
@@ -49,4 +53,16 @@ class User {
         EnumType.STRING
     )
     var roles: Set<Role>? = null
+
+    var friends: Collection<User> = mutableListOf()
+
+    var photoUrl: String? = null
+
+    // sender messages collection
+    @OneToMany(mappedBy = "sender", targetEntity = Message::class, fetch = FetchType.LAZY)
+    var sentMessages: Collection<Message>? = null
+
+    // received messages collection
+//    @OneToMany(mappedBy = "recipient", targetEntity = Message::class, fetch = FetchType.LAZY)
+//    var receivedMessages: Collection<Message>? = null
 }

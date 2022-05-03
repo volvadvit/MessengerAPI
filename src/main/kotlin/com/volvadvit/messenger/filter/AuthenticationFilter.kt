@@ -2,6 +2,7 @@ package com.volvadvit.messenger.filter
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.volvadvit.messenger.services.TokenService
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -17,7 +18,9 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 
-class AuthenticationFilter (private val authManager: AuthenticationManager)
+class AuthenticationFilter (
+    private val authManager: AuthenticationManager,
+    private val tokenService: TokenService)
     : UsernamePasswordAuthenticationFilter() {
 
     @Throws(AuthenticationException::class)
@@ -48,7 +51,7 @@ class AuthenticationFilter (private val authManager: AuthenticationManager)
             response.contentType = MediaType.APPLICATION_JSON_VALUE
             ObjectMapper().writeValue(
                 response.outputStream,
-                TokenService.generateJwtToken(
+                tokenService.generateJwtToken(
                     user.username,
                     user.authorities.stream()
                         .map { obj: GrantedAuthority -> obj.authority }

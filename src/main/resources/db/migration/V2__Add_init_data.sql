@@ -1,20 +1,20 @@
-insert into user_details (id, account_status, created_at, password, phone_number, status, username)
-values (1, 'activated', current_timestamp, '1234', '1111111111', 'available', 'peter');
+insert into user_details (id, account_status, created_at, password, email, status, username)
+values (1, 'activated', current_timestamp, '1234', 'user@email.com', 'available', 'peter');
 
 insert into user_role (user_id, roles)
 values (1, 'USER');
 
-insert into user_details (id, account_status, created_at, password, phone_number, status, username)
-values (2, 'activated', current_timestamp, '1234', '2222222222', 'available', 'ivan');
+insert into user_details (id, account_status, created_at, password, email, status, username)
+values (2, 'activated', current_timestamp, '1234', 'admin@email.com', 'available', 'ivan');
 
 insert into user_role (user_id, roles)
 values (2, 'USER'), (2, 'ADMIN');
 
-insert into user_details (id, account_status, created_at, password, phone_number, status, username)
-values (3, 'activated', current_timestamp, '1234', '3333333333', 'available', 'pumba');
+insert into user_details (id, account_status, created_at, password, email, status, username)
+values (3, 'activated', current_timestamp, '1234', 'simba@email.com', 'available', 'pumba');
 
 insert into user_role (user_id, roles)
-values (3, 'DEV'), (3, 'USER');
+values (3, 'USER');
 
 update user_details set password='$2a$08$PnBNTt8RILQFwMDgX2IOu.Sz5/omfP6QtaFzM1LpJ9NCHoraXuH76' where id=1;
 update user_details set password='$2a$08$Wv6r0.s9y9cz8xLxVLJDFe.BeOEWsNC4i8IqGF7/2zvNeFkqZ4nF2' where id=2;

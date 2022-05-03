@@ -19,9 +19,11 @@ import javax.servlet.http.HttpServletRequest
 @RestController
 @RequestMapping("/v1/conversations")
 @Api(value = "conversations")
-class ConversationController(val conversationService: ConversationService,
-                             val conversationAssembler: ConversationAssembler, val userRepository: UserRepository
-){
+class ConversationController(
+    val conversationService: ConversationService,
+    val conversationAssembler: ConversationAssembler,
+    val userRepository: UserRepository
+) {
 
     @GetMapping
     @ApiOperation(value = "Get list of conversations for currently logged user")

@@ -1,9 +1,9 @@
-package com.volvadvit.messenger.models
+package com.volvadvit.messenger.constants
 
 import org.springframework.security.core.GrantedAuthority
 
 enum class Role : GrantedAuthority {
-    USER, ADMIN, DEV;
+    USER, ADMIN;
 
     override fun getAuthority(): String {
         return name

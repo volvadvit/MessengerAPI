@@ -6,6 +6,7 @@ import com.volvadvit.messenger.services.TokenService
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
 import java.io.IOException
 import javax.servlet.FilterChain
@@ -13,7 +14,10 @@ import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class AuthorizationFilter : OncePerRequestFilter() {
+
+class AuthorizationFilter(
+    private val tokenService: TokenService
+) : OncePerRequestFilter() {
 
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(
@@ -28,8 +32,10 @@ class AuthorizationFilter : OncePerRequestFilter() {
 
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 try {
-                    TokenService.verifiedAccessToken(authorizationHeader)
-                    logger.info("Token is verified")
+                    val authToken = tokenService.verifiedAccessToken(authorizationHeader)
+                    logger.info("User token is verified. Save to security context")
+                    // save user in security context
+                    SecurityContextHolder.getContext().authentication = authToken
                     filterChain.doFilter(request, response)
                 } catch (e: Exception) {
                     logger.error("Error in authorization filter: ${e.message}")
