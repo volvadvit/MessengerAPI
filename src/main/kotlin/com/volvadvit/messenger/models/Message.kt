@@ -1,7 +1,6 @@
 package com.volvadvit.messenger.models
 
 import com.volvadvit.messenger.constants.MessageStatus
-import com.volvadvit.messenger.constants.Role
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.Instant
 import java.util.*
@@ -25,7 +24,7 @@ class Message {
 //    var recipient: User? = null
 
     @Size(min = 1, max = 255)
-    var body: String? = ""
+    var body: String = ""
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "conversation_id", referencedColumnName = "id")
@@ -35,5 +34,5 @@ class Message {
     var createdAt: Date = Date.from(Instant.now())
 
     @Enumerated(EnumType.STRING)
-    var status: MessageStatus? = null
+    var status: MessageStatus = MessageStatus.CREATED
 }

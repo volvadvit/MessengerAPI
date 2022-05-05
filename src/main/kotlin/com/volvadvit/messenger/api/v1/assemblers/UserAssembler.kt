@@ -3,7 +3,6 @@ package com.volvadvit.messenger.api.v1.assemblers
 import com.volvadvit.messenger.api.v1.models.ShortUserVO
 import com.volvadvit.messenger.api.v1.models.UserListVO
 import com.volvadvit.messenger.api.v1.models.UserVO
-import com.volvadvit.messenger.exceptions.InvalidUserException
 import com.volvadvit.messenger.models.User
 import org.springframework.stereotype.Component
 
@@ -14,13 +13,13 @@ class UserAssembler {
         return UserVO(
             user.id,
             user.username,
+            user.photoUrl ?: "https://i.ytimg.com/vi/dqQcGplC2eg/mqdefault.jpg",
             user.email,
             user.status,
-            user.lastActive.toString(),
             user.createdAt.toString(),
             user.lastActive.toString(),
             user.friends.map { toShortUserVO(it)},
-            user.roles ?: throw InvalidUserException("Cannot return user without role"))
+            user.roles)
     }
 
     fun toUserListVO(users: List<User>) : UserListVO {

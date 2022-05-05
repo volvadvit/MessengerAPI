@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import java.time.Instant
+import java.util.*
 
 @ControllerAdvice
 class ConversationControllerAdvice {
@@ -14,9 +16,11 @@ class ConversationControllerAdvice {
     @ExceptionHandler(InvalidConversationException::class)
     fun conversationInvalid(invalidConversationException: InvalidConversationException
     ) : ResponseEntity<ResponseMapper> {
-        val res = ResponseMapper(HttpStatus.NOT_FOUND.value(),
+        val res = ResponseMapper(
+            HttpStatus.NOT_FOUND.value(),
             ResponseConstants.INVALID_CONVERSATION_ID.value,
-            invalidConversationException.message)
+            invalidConversationException.message,
+            Date.from(Instant.now()))
         return ResponseEntity.unprocessableEntity().body(res)
     }
 }

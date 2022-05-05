@@ -18,6 +18,8 @@ import java.util.*
 @Service
 class TokenService {
 
+    //TODO change RedisCommands<String, String> to RedisTemplate
+
     private val logger = LoggerFactory.getLogger(TokenService::class.java)
 
     @Value("\${redis.host}")
@@ -87,7 +89,7 @@ class TokenService {
         }
     }
 
-    fun updateAccessToken(authorizationHeader: String, userService: UserService): Map<String, String> {
+    fun refreshTokenPair(authorizationHeader: String, userService: UserService): Map<String, String> {
         setUpRedis()
 
         val username = getUsernameFromToken(authorizationHeader)
@@ -98,7 +100,7 @@ class TokenService {
 
             logger.info("found existing refresh token: {}", tokenFromRedis)
 
-            val user = userService.retrieveUserData(username)
+            val user = userService.getByUsername(username)
                 ?: throw UsernameUnavailableException("User for provided token not found")
             val roles: List<String> = user.roles?.map{ role ->  role.name}
                 ?: throw InvalidTokenException("Cannot get user authorities")
@@ -106,6 +108,11 @@ class TokenService {
         } else {
             throw InvalidTokenException("Token from redis is invalid. $authorizationHeader")
         }
+    }
+
+    fun deleteToken(username: String) {
+        val redisKey = "token:$username"
+        syncCommands?.expire(redisKey, 1.toLong())
     }
 
     private fun getUsernameFromToken(authorizationHeader: String?): String {

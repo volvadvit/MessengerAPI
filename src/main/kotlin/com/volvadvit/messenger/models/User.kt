@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat
 import java.time.Instant
 import java.util.*
 import javax.persistence.*
+import javax.validation.constraints.Email
 import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 
@@ -28,7 +29,8 @@ class User {
     @Size(min = 2)
     var username: String = ""
 
-    @Pattern(regexp = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$")
+//    @Pattern(regexp = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$")
+    @Email
     var email: String = ""
 
     @Size(min = 3, max = 60)
@@ -45,14 +47,14 @@ class User {
         name = "user_conversations",
         joinColumns = [JoinColumn(name = "user_id")],
         inverseJoinColumns = [JoinColumn(name = "conversation_id")])
-    var conversations : Set<Conversation>? = null
+    var conversations : Set<Conversation> = setOf()
 
     @ElementCollection(targetClass = Role::class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = [JoinColumn(name = "user_id")])
     @Enumerated(
         EnumType.STRING
     )
-    var roles: Set<Role>? = null
+    var roles: Set<Role> = setOf()
 
     var friends: Collection<User> = mutableListOf()
 
@@ -60,7 +62,7 @@ class User {
 
     // sender messages collection
     @OneToMany(mappedBy = "sender", targetEntity = Message::class, fetch = FetchType.LAZY)
-    var sentMessages: Collection<Message>? = null
+    var sentMessages: Set<Message> = setOf()
 
     // received messages collection
 //    @OneToMany(mappedBy = "recipient", targetEntity = Message::class, fetch = FetchType.LAZY)

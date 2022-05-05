@@ -15,7 +15,7 @@ class MessageAssembler {
             message.conversation?.id ?: throw InvalidMessageException("Not found conversation for message"),
             message.body,
             message.createdAt.toString(),
-            message.status!!.name
+            message.status.name
         )
     }
 }

@@ -3,6 +3,7 @@ package com.volvadvit.messenger.api.v1.models
 import com.volvadvit.messenger.constants.Role
 import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
+import java.util.*
 
 data class MessageRequest(val recipientId: Long, val message: String)
 
@@ -13,7 +14,9 @@ data class ResponseMapper (
     @ApiModelProperty("Additional message with error/success message")
     val message: String,
     @ApiModelProperty("Response model of required entity")
-    val body: Any
+    val body: Any,
+    @ApiModelProperty("Timestamp of response1")
+    val timestamp: Date
 )
 
 data class UserVO (
@@ -35,12 +38,12 @@ data class ShortUserVO (
 )
 
 @ApiModel(value = "Model to contain details for update user")
-data class UpdatedUserDetails (
-    val username: String?,
-    val password: String?,
+data class UserUpdatedDetails (
+    val username: String,
+    val password: String,
     val photoUrl: String,
-    val email: String?,
-    val status: String?
+    val email: String,
+    val status: String
 )
 
 data class UserListVO (

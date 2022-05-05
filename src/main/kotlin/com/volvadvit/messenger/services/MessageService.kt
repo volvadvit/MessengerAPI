@@ -32,7 +32,6 @@ class MessageService (val repository: MessageRepository,
                 conversationRepository.save(conversation)
                 val message = Message()
                 message.sender = sender
-                message.recipient = recipient
                 message.body = messageText
                 message.conversation = conversation
                 repository.save(message)
