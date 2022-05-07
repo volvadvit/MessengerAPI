@@ -9,6 +9,8 @@ import org.springframework.http.MediaType
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
 import java.io.IOException
+import java.sql.Timestamp
+import java.time.Instant
 import javax.servlet.FilterChain
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
@@ -25,7 +27,10 @@ class AuthorizationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain)
     {
-        if ("/login" == request.servletPath || "/user/token/refresh" == request.servletPath) {
+        if ("/v1/login" == request.servletPath ||
+            "/v1/login" == request.servletPath ||
+            "v1/users/token/refresh" == request.servletPath)
+        {
             filterChain.doFilter(request, response)
         } else {
             val authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION)
@@ -46,7 +51,12 @@ class AuthorizationFilter(
 
                     ObjectMapper().writeValue(
                         response.outputStream,
-                        ResponseMapper(HttpStatus.UNAUTHORIZED.value(), "error logging", e.message!!)
+                        ResponseMapper(
+                            HttpStatus.UNAUTHORIZED.value(),
+                            "error logging",
+                            e.message!!,
+                            Timestamp.from(Instant.now())
+                        )
                     )
                 }
             } else {

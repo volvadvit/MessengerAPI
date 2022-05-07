@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import java.sql.Timestamp
 import java.time.Instant
-import java.util.*
 
 @ControllerAdvice
 class ConversationControllerAdvice {
@@ -20,7 +20,7 @@ class ConversationControllerAdvice {
             HttpStatus.NOT_FOUND.value(),
             ResponseConstants.INVALID_CONVERSATION_ID.value,
             invalidConversationException.message,
-            Date.from(Instant.now()))
+            Timestamp.from(Instant.now()))
         return ResponseEntity.unprocessableEntity().body(res)
     }
 }

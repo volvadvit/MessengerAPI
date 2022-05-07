@@ -16,7 +16,8 @@ class ConversationAssembler(val userAssembler: UserAssembler,
         return ConversationVO(
             conversation.id,
             conversation.users.map { userAssembler.toShortUserVO(it!!) },
-            conversation.messages.map { messageAssembler.toMessageVO(it) }
+            conversation.messages.map { messageAssembler.toMessageVO(it) },
+            conversation.createdAt.toString()
         )
     }
 

@@ -9,8 +9,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import java.sql.Timestamp
 import java.time.Instant
-import java.util.*
 
 @ControllerAdvice
 class UserControllerAdvice {
@@ -22,7 +22,7 @@ class UserControllerAdvice {
             HttpStatus.NOT_FOUND.value(),
             ResponseConstants.USERNAME_UNAVAILABLE.value,
             usernameUnavailableException.message,
-            Date.from(Instant.now()))
+            Timestamp.from(Instant.now()))
         return ResponseEntity.unprocessableEntity().body(res)
     }
 
@@ -30,9 +30,9 @@ class UserControllerAdvice {
     fun invalidId(invalidUserIdException: InvalidUserIdException) : ResponseEntity<ResponseMapper> {
         val res = ResponseMapper(
             HttpStatus.NOT_FOUND.value(),
-            ResponseConstants.INVALID_USER_ID.value,
+            ResponseConstants.ID_NULL.value,
             invalidUserIdException.message,
-            Date.from(Instant.now()))
+            Timestamp.from(Instant.now()))
         return ResponseEntity.badRequest().body(res)
     }
 
@@ -43,7 +43,7 @@ class UserControllerAdvice {
             HttpStatus.FORBIDDEN.value(),
             ResponseConstants.ACCOUNT_DEACTIVATED.value,
             userDeactivatedException.message,
-            Date.from(Instant.now()))
+            Timestamp.from(Instant.now()))
         return ResponseEntity(res, HttpStatus.FORBIDDEN)
     }
 }

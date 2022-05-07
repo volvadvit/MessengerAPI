@@ -19,14 +19,14 @@ import javax.servlet.http.HttpServletRequest
 @RestController
 @RequestMapping("/v1/conversations")
 @Api(value = "conversations")
-class ConversationController(
+class ConversationController (
     val conversationService: ConversationService,
     val conversationAssembler: ConversationAssembler,
     val userRepository: UserRepository
 ) {
 
     @GetMapping
-    @ApiOperation(value = "Get list of conversations for currently logged user")
+    @ApiOperation(value = "Get list of conversations for current user")
     @ApiResponse(code = 200, message = "Return list of conversations", response = ConversationListVO::class)
     fun list(request: HttpServletRequest) : ResponseEntity<ConversationListVO> {
         val user = userRepository.findByUsername(request.userPrincipal.name)

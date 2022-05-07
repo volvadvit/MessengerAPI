@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.stereotype.Service
+import java.sql.Timestamp
 import java.time.Instant
 import java.util.*
 
@@ -49,12 +50,12 @@ class TokenService {
         val accessToken = JWT.create()
             .withSubject(username)
             .withExpiresAt(Date(System.currentTimeMillis() + accessTokenExp.toLong()))
-            .withIssuedAt(Date.from(Instant.now()))
+            .withIssuedAt(Timestamp.from(Instant.now()))
             .sign(algorithm)
 
         val refreshToken = JWT.create()
             .withSubject(username)
-            .withIssuedAt(Date.from(Instant.now()))
+            .withIssuedAt(Timestamp.from(Instant.now()))
             .sign(algorithm)
 
         syncCommands?.set("token:$username", refreshToken)

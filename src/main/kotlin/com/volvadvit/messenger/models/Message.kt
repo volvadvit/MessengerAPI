@@ -2,8 +2,8 @@ package com.volvadvit.messenger.models
 
 import com.volvadvit.messenger.constants.MessageStatus
 import org.springframework.format.annotation.DateTimeFormat
+import java.sql.Timestamp
 import java.time.Instant
-import java.util.*
 import javax.persistence.*
 import javax.validation.constraints.Size
 
@@ -31,7 +31,7 @@ class Message {
     var conversation: Conversation? = null
 
     @DateTimeFormat
-    var createdAt: Date = Date.from(Instant.now())
+    var createdAt: Timestamp = Timestamp.from(Instant.now())
 
     @Enumerated(EnumType.STRING)
     var status: MessageStatus = MessageStatus.CREATED

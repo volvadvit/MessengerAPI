@@ -18,7 +18,7 @@ class UserAssembler {
             user.status,
             user.createdAt.toString(),
             user.lastActive.toString(),
-            user.friends.map { toShortUserVO(it)},
+            user.friendsId,
             user.roles)
     }
 

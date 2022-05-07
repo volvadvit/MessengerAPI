@@ -1,8 +1,8 @@
 package com.volvadvit.messenger.models
 
 import org.springframework.format.annotation.DateTimeFormat
+import java.sql.Timestamp
 import java.time.Instant
-import java.util.*
 import javax.persistence.*
 
 @Entity
@@ -12,15 +12,15 @@ class Conversation {
     var id: Long = 0
 
     @ManyToMany(mappedBy = "conversations", targetEntity = User::class)
-    val users: Collection<User?> = mutableListOf()
+    val users: Set<User?> = hashSetOf()
 
     @DateTimeFormat
-    var createdAt: Date = Date.from(Instant.now())
+    var createdAt: Timestamp = Timestamp.from(Instant.now())
 
     @OneToMany(mappedBy = "conversation", targetEntity = Message::class, cascade = [CascadeType.ALL])
-    val messages: Collection<Message> = mutableListOf()
+    val messages: List<Message> = arrayListOf()
 
-    var photoURL: String? = null
+    var photoUrl: String? = null
 
     var name: String? = null
 }

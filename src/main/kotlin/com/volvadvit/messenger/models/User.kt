@@ -2,7 +2,9 @@ package com.volvadvit.messenger.models
 
 import com.volvadvit.messenger.constants.Role
 import com.volvadvit.messenger.repositories.listeners.UserListener
+import org.hibernate.validator.constraints.URL
 import org.springframework.format.annotation.DateTimeFormat
+import java.sql.Timestamp
 import java.time.Instant
 import java.util.*
 import javax.persistence.*
@@ -23,7 +25,7 @@ class User {
     var id: Long = 0
 
     @DateTimeFormat
-    var createdAt: Date = Date.from(Instant.now())
+    var createdAt: Date = Timestamp.from(Instant.now())
 
     @Column(unique = true)
     @Size(min = 2)
@@ -37,7 +39,7 @@ class User {
     var password: String = ""
 
     @DateTimeFormat
-    var lastActive: Date = Date.from(Instant.now())
+    var lastActive: Timestamp = Timestamp.from(Instant.now())
 
     @Pattern(regexp = "\\A(activated|deactivated)\\z")
     var status: String = "activated"
@@ -47,22 +49,30 @@ class User {
         name = "user_conversations",
         joinColumns = [JoinColumn(name = "user_id")],
         inverseJoinColumns = [JoinColumn(name = "conversation_id")])
-    var conversations : Set<Conversation> = setOf()
+    var conversations : Set<Conversation> = hashSetOf()
 
     @ElementCollection(targetClass = Role::class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = [JoinColumn(name = "user_id")])
-    @Enumerated(
-        EnumType.STRING
-    )
+    @Enumerated(EnumType.STRING)
     var roles: Set<Role> = setOf()
 
-    var friends: Collection<User> = mutableListOf()
+    @ElementCollection
+    @CollectionTable(
+        name = "user_friends",
+        joinColumns = [JoinColumn(name = "user_id")])
+    @Column(name = "friend_id")
+    var friendsId: Set<Long> = hashSetOf()
 
+    @URL
     var photoUrl: String? = null
 
     // sender messages collection
     @OneToMany(mappedBy = "sender", targetEntity = Message::class, fetch = FetchType.LAZY)
-    var sentMessages: Set<Message> = setOf()
+    var sentMessages: List<Message> = arrayListOf()
+
+    override fun toString(): String {
+        return "id=${this.id}, username=${this.username}, email=${this.email},photo=${this.photoUrl}"
+    }
 
     // received messages collection
 //    @OneToMany(mappedBy = "recipient", targetEntity = Message::class, fetch = FetchType.LAZY)

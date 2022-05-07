@@ -8,7 +8,6 @@ import javax.validation.Validation
 
 @Component
 class ConversationValidator {
-
     fun validate(conv: Conversation?): Conversation? {
         val validator = Validation.buildDefaultValidatorFactory().validator
         val violations: Set<ConstraintViolation<Conversation>> = validator.validate(conv)
