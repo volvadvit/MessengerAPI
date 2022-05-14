@@ -1,28 +1,32 @@
 package com.volvadvit.messenger.config
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.volvadvit.messenger.constants.Role
 import com.volvadvit.messenger.filter.AuthenticationFilter
 import com.volvadvit.messenger.filter.AuthorizationFilter
-import com.volvadvit.messenger.constants.Role
 import com.volvadvit.messenger.services.TokenService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 @Configuration
 @EnableWebSecurity
 class WebSecurityConfig(
-    private val tokenService: TokenService
+    private val tokenService: TokenService,
+    private val objectMapper: ObjectMapper
 ) : WebSecurityConfigurerAdapter() {
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
-        val authenticationFilter = AuthenticationFilter(authenticationManagerBean()!!, tokenService)
+        val authenticationFilter = AuthenticationFilter(authenticationManagerBean()!!, tokenService, objectMapper)
         authenticationFilter.setFilterProcessesUrl("/v1/login")
 
         http.cors().and().csrf().disable()
@@ -50,7 +54,7 @@ class WebSecurityConfig(
             // login and generate token
             .addFilter(authenticationFilter)
             // re-identify the logged user, verify token
-            .addFilterBefore(AuthorizationFilter(tokenService), UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(AuthorizationFilter(tokenService, objectMapper), UsernamePasswordAuthenticationFilter::class.java)
     }
 
     @Bean
@@ -58,4 +62,11 @@ class WebSecurityConfig(
     override fun authenticationManagerBean(): AuthenticationManager? {
         return super.authenticationManagerBean()
     }
+
+//    @Throws(java.lang.Exception::class)
+//    override fun configure(auth: AuthenticationManagerBuilder) {
+//        auth
+//            .userDetailsService<UserDetailsService>(userService)
+//            .passwordEncoder(passwordEncoder)
+//    }
 }
