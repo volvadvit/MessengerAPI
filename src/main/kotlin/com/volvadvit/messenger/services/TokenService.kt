@@ -41,11 +41,12 @@ class TokenService {
 
     private lateinit var algorithm : Algorithm
     private lateinit var verifier : JWTVerifier
-    private val bearerLength = "Bearer ".length
-    private var syncCommands: RedisCommands<String, String>? = null
+    private lateinit var syncCommands: RedisCommands<String, String>
+    private val BEARER = "Bearer"
+    private val bearerLength = "$BEARER ".length
 
     fun generateJwtToken(username: String, roles: List<String?>?): Map<String, String> {
-        setUpRedis()
+        syncCommands = setUpRedis()
 
         val accessToken = JWT.create()
             .withSubject(username)
@@ -58,21 +59,21 @@ class TokenService {
             .withIssuedAt(Timestamp.from(Instant.now()))
             .sign(algorithm)
 
-        syncCommands?.set("token:$username", refreshToken)
-        syncCommands?.expire("token:$username", refreshTokenExp.toLong())
+        syncCommands.set("token:$username", refreshToken)
+        syncCommands.expire("token:$username", refreshTokenExp.toLong())
 
         logger.info("Create token pair access: {}, refresh: {}", accessToken, refreshToken)
 
         return mapOf(
             "access_token" to accessToken,
-            "token_type" to "bearer",
+            "token_type" to BEARER,
             "expires_in" to accessTokenExp,
             "refresh_token" to refreshToken
         )
     }
 
     fun verifiedAccessToken(authorizationHeader: String) : UsernamePasswordAuthenticationToken {
-        setUpRedis()
+        syncCommands = setUpRedis()
 
         val token = authorizationHeader.substring(bearerLength)
         val decodedJWT = verifier.verify(token)
@@ -91,33 +92,34 @@ class TokenService {
     }
 
     fun refreshTokenPair(authorizationHeader: String, userService: UserService): Map<String, String> {
-        setUpRedis()
+        syncCommands = setUpRedis()
 
         val username = getUsernameFromToken(authorizationHeader)
         val tokenFromRequest = authorizationHeader.substring(bearerLength)
-        val tokenFromRedis = syncCommands?.get("token:$username")
+        val tokenFromRedis = syncCommands.get("token:$username")
 
         return if (!tokenFromRedis.isNullOrEmpty() && tokenFromRedis == tokenFromRequest) {
 
-            logger.info("found existing refresh token: {}", tokenFromRedis)
+            logger.info("Found existing refresh token: {}", tokenFromRedis)
 
             val user = userService.getByUsername(username)
                 ?: throw UsernameUnavailableException("User for provided token not found")
-            val roles: List<String> = user.roles?.map{ role ->  role.name}
+            val roles: List<String> = user.roles.map{ role ->  role.name}
                 ?: throw InvalidTokenException("Cannot get user authorities")
             generateJwtToken(username, roles)
         } else {
-            throw InvalidTokenException("Token from redis is invalid. $authorizationHeader")
+            throw InvalidTokenException("Token from redis is invalid. Your token is '$tokenFromRequest'; redis token is '$tokenFromRedis'")
         }
     }
 
     fun deleteToken(username: String) {
+        syncCommands = setUpRedis()
         val redisKey = "token:$username"
-        syncCommands?.expire(redisKey, 1.toLong())
+        syncCommands.expire(redisKey, 1.toLong())
     }
 
     private fun getUsernameFromToken(authorizationHeader: String?): String {
-        return if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+        return if (authorizationHeader != null && authorizationHeader.startsWith("$BEARER ")) {
             val token = authorizationHeader.substring(bearerLength)
             val decodedJWT = verifier.verify(token)
             decodedJWT.subject
@@ -126,8 +128,8 @@ class TokenService {
         }
     }
 
-    private fun setUpRedis(): RedisCommands<String, String>? {
-        if (syncCommands != null) {
+    private fun setUpRedis(): RedisCommands<String, String> {
+        if (this::syncCommands.isInitialized) {
             return syncCommands
         }
 

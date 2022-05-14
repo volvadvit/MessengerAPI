@@ -1,10 +1,7 @@
 package com.volvadvit.messenger.services
 
 import com.volvadvit.messenger.constants.ResponseConstants.*
-import com.volvadvit.messenger.exceptions.InvalidUserIdException
-import com.volvadvit.messenger.exceptions.UserAlreadyExists
-import com.volvadvit.messenger.exceptions.UserNotExists
-import com.volvadvit.messenger.exceptions.UsernameUnavailableException
+import com.volvadvit.messenger.exceptions.*
 import com.volvadvit.messenger.models.User
 import com.volvadvit.messenger.repositories.UserRepository
 import org.slf4j.LoggerFactory
@@ -12,6 +9,9 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
+import java.sql.Timestamp
+import java.time.Instant
+
 @Service
 class UserService (
     private val repository: UserRepository,
@@ -41,16 +41,31 @@ class UserService (
         user.email = userDetails.email
         user.password = userDetails.password
         user.photoUrl = userDetails.photoUrl ?: "https://i.ytimg.com/vi/dqQcGplC2eg/mqdefault.jpg"
-        user.createdAt = userDetails.createdAt
+        user.createdAt = Timestamp.from(Instant.now())
+        user.lastActive = Timestamp.from(Instant.now())
         val savedUser = repository.save(user)
         logger.info("User ${savedUser.id}:${savedUser.username} saved")
         return savedUser
+    }
+
+    fun saveOAuthUser(user: User?) : User {
+        if (user == null) {
+            logger.info(SAVE_NULL_USER.value)
+            throw java.lang.IllegalArgumentException(SAVE_NULL_USER.value)
+        }
+        if (repository.findByEmail(user.email) != null) {
+            throw UserAlreadyExists("User with email: ${user.email}, already exists.")
+        }
+        val result = repository.save(user)
+        logger.info("User ${result.id}:${result.username} saved")
+        return result
     }
 
     fun listUsersExceptOf(currentUser: User): List<User> {
         return repository.findAll().mapTo(ArrayList()) { it }.filter { it != currentUser }
     }
 
+    @Throws(UsernameUnavailableException::class)
     fun getByUsername(username: String?): User {
         if (username.isNullOrBlank()) {
             throw UsernameUnavailableException(USERNAME_UNAVAILABLE.value)
@@ -67,6 +82,15 @@ class UserService (
         return userOptional.orElseThrow {
             throw InvalidUserIdException("A user with an id of '$id' does not exist.")
         }
+    }
+
+    @Throws(InvalidUserEmailException::class, UserNotExists::class)
+    fun getByEmail(email: String?): User {
+        if (email == null) {
+            throw InvalidUserEmailException(INVALID_EMAIL.value)
+        }
+        val user = repository.findByEmail(email)
+        return user ?: throw UserNotExists("${USERNAME_UNAVAILABLE.value}. User email: $email")
     }
 
     fun usernameExists(username: String): Boolean {

@@ -3,6 +3,7 @@ package com.volvadvit.messenger.constants
 enum class ResponseConstants(val value: String) {
     USERNAME_UNAVAILABLE("User is disabled or not found"),
     INVALID_TOKEN("Token have bad format or null"),
+    INVALID_EMAIL("Email have bad format or null"),
     MESSAGE_EMPTY("Message is empty"),
     MESSAGE_RECIPIENT_INVALID("Message recipient is disabled or not found"),
     ACCOUNT_DEACTIVATED("User's account is deactivated"),

@@ -82,7 +82,7 @@ class UserController (
     @GetMapping("/token/refresh")
     @ApiOperation("Method to generate new pair of access/refresh tokens for current user. Required REFRESH token in Authorization header")
     @Throws(IOException::class)
-    fun refreshToken(request: HttpServletRequest, response: HttpServletResponse?): Map<String, String>? {
+    fun refreshToken(request: HttpServletRequest): Map<String, String>? {
         return tokenService.refreshTokenPair(request.getHeader(HttpHeaders.AUTHORIZATION), userService)
     }
 

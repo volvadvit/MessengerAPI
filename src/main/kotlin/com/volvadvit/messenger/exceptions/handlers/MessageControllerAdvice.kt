@@ -7,12 +7,12 @@ import com.volvadvit.messenger.exceptions.InvalidMessageRecipientException
 import com.volvadvit.messenger.exceptions.MessageEmptyException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.RestControllerAdvice
 import java.sql.Timestamp
 import java.time.Instant
 
-@ControllerAdvice
+@RestControllerAdvice
 class MessageControllerAdvice {
 
     @ExceptionHandler(MessageEmptyException::class)

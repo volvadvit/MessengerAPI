@@ -32,6 +32,7 @@ class WebSecurityConfig(
             .antMatchers(
                 "/v1/", "/",
                 "/v1/login",
+                "v1/auth/vk/login",
                 "/v1/users/registrations",
                 "/webjars/**",
                 "/swagger-ui/**",
@@ -39,8 +40,9 @@ class WebSecurityConfig(
                 "/swagger-resources/**",
                 "/v2/api-docs/**"
             ).permitAll()
+            .antMatchers("/v1/users/token/refresh").permitAll()
             .antMatchers("/h2-console/**").permitAll()
-            .antMatchers(HttpMethod.PUT, "/v1/users/*").hasAnyAuthority(Role.ADMIN.authority)
+            .antMatchers(HttpMethod.PUT, "/v1/users/*").hasAnyAuthority(Role.USER.authority)
             .antMatchers("/v1/**/**").hasAnyAuthority(Role.USER.authority, Role.ADMIN.authority)
             .anyRequest().authenticated()
             .and().logout().deleteCookies("JSESSIONID").logoutSuccessUrl("/v1").permitAll()

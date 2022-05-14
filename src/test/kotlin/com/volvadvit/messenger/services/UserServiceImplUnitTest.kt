@@ -11,7 +11,8 @@ import org.mockito.Mockito.`when`
 internal class UserServiceImplUnitTest {
 
     private val repository: UserRepository = mock(UserRepository::class.java)
-    private val userService: UserService = UserService(repository)
+    private val tokenService: TokenService = mock(TokenService::class.java)
+    private val userService: UserService = UserService(repository, tokenService)
     private lateinit var testUser: User
 
     @BeforeEach

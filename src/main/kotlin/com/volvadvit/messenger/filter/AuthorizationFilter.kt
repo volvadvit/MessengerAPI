@@ -16,9 +16,9 @@ import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-
 class AuthorizationFilter(
-    private val tokenService: TokenService
+    private val tokenService: TokenService,
+    private val objectMapper: ObjectMapper
 ) : OncePerRequestFilter() {
 
     @Throws(ServletException::class, IOException::class)
@@ -49,7 +49,7 @@ class AuthorizationFilter(
                     response.status = HttpStatus.UNAUTHORIZED.value()
                     response.contentType = MediaType.APPLICATION_JSON_VALUE
 
-                    ObjectMapper().writeValue(
+                    objectMapper.writeValue(
                         response.outputStream,
                         ResponseMapper(
                             HttpStatus.UNAUTHORIZED.value(),
